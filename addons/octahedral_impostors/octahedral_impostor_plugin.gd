@@ -1,25 +1,25 @@
-tool
+@tool
 extends EditorPlugin
 
 const tool_menu_text = "Scene Octahedral Impostors Baker..."
 
 var button: Button
-var converter: WindowDialog
-var selected_object: Spatial
-var batch_converter: WindowDialog
+var converter: Window
+var selected_object: Node3D
+var batch_converter: Window
 var octa_impostor_editor_inspector: EditorInspectorPlugin
 
 # Handles objects that are either geometry instances or have such children.
 # CSG objects don't have a proper bounding box, so they can't be used.
-func handles(object: Object) -> bool:
+func _handles(object: Object) -> bool:
 	var handles := false
 
-	if object is Spatial:
-		if object is GeometryInstance and not (object is CSGShape):
+	if object is Node3D:
+		if object is GeometryInstance3D and not (object is CSGShape3D):
 			handles = true
 		else:
 			for child in object.get_children():
-				if handles(child):
+				if _handles(child):
 					handles = true
 					break
 
@@ -27,7 +27,7 @@ func handles(object: Object) -> bool:
 	return handles
 
 
-func edit(object: Object) -> void:
+func _edit(object: Object) -> void:
 	selected_object = object
 
 
@@ -36,17 +36,17 @@ func _enter_tree() -> void:
 	button.flat = true
 	button.text = "Convert to Impostor"
 	button.hide()
-	button.connect("pressed", self, "_on_Button_pressed")
+	button.connect("pressed", Callable(self, "_on_Button_pressed"))
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, button)
 	
-	converter = preload("ImpostorBakerWindow.tscn").instance()
+	converter = preload("ImpostorBakerWindow.tscn").instantiate()
 	converter.plugin = self
 	get_editor_interface().get_base_control().add_child(converter)
 
-	batch_converter =  preload("ImpostorQueueWindow.tscn").instance()
+	batch_converter =  preload("ImpostorQueueWindow.tscn").instantiate()
 	batch_converter.plugin = self
 	get_editor_interface().get_base_control().add_child(batch_converter)
-	add_tool_menu_item(tool_menu_text, self, "batch_baking")
+	add_tool_menu_item(tool_menu_text, Callable(self, "batch_baking"))
 
 	octa_impostor_editor_inspector = preload("scripts/octa_impostor_editor_inspector_plugin.gd").new()
 	add_inspector_plugin(octa_impostor_editor_inspector)
@@ -81,6 +81,6 @@ func update_all_octaimpostor_lod_nodes(node, camera):
 		update_all_octaimpostor_lod_nodes(child, camera)
 
 
-func forward_spatial_gui_input(camera, event):
+func _forward_3d_gui_input(camera, event):
 	update_all_octaimpostor_lod_nodes(get_tree().get_edited_scene_root(), camera)
 	return false

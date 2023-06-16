@@ -1,17 +1,17 @@
-[gd_resource type="Resource" load_steps=8 format=2]
+[gd_resource type="Resource" load_steps=8 format=3 uid="uid://tipmgthvqtx"]
 
-[ext_resource path="res://addons/octahedral_impostors/scripts/baking/maps/depth_map.gd" type="Script" id=1]
-[ext_resource path="res://addons/octahedral_impostors/scripts/baking/maps/albedo_map.gd" type="Script" id=2]
-[ext_resource path="res://addons/octahedral_impostors/scripts/baking/maps/normalmap_map.gd" type="Script" id=3]
-[ext_resource path="res://addons/octahedral_impostors/scripts/profile_resource.gd" type="Script" id=4]
-[ext_resource path="res://addons/octahedral_impostors/materials/shaders/ImpostorShader.shader" type="Shader" id=5]
-[ext_resource path="res://addons/octahedral_impostors/materials/shaders/ImpostorShaderShadows.shader" type="Shader" id=6]
-[ext_resource path="res://addons/octahedral_impostors/scripts/baking/maps/orm_map.gd" type="Script" id=7]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/maps/depth_map.gd" id="1"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/maps/albedo_map.gd" id="2"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/maps/normalmap_map.gd" id="3"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/profile_resource.gd" id="4"]
+[ext_resource type="Shader" path="res://addons/octahedral_impostors/materials/shaders/ImpostorShader.gdshader" id="5"]
+[ext_resource type="Shader" path="res://addons/octahedral_impostors/materials/shaders/ImpostorShaderShadows.gdshader" id="6"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/maps/orm_map.gd" id="7"]
 
 [resource]
-script = ExtResource( 4 )
+script = ExtResource("4")
 name = "standard"
-map_baker_with_alpha_mask = ExtResource( 2 )
-standard_map_bakers = [ ExtResource( 3 ), ExtResource( 1 ), ExtResource( 7 ) ]
-main_shader = ExtResource( 5 )
-shadows_shader = ExtResource( 6 )
+map_baker_with_alpha_mask = ExtResource("2")
+standard_map_bakers = Array[GDScript]([ExtResource("3"), ExtResource("1"), ExtResource("7")])
+main_shader = ExtResource("5")
+shadows_shader = ExtResource("6")

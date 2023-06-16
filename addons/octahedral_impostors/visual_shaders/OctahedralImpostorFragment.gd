@@ -1,4 +1,4 @@
-tool
+@tool
 extends VisualShaderNodeCustom
 class_name VisualShaderNodeOCtaImpFrag
 
@@ -65,16 +65,16 @@ func _get_output_port_name(port: int):
 func _get_output_port_type(port: int):
 	match port:
 		0:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 		1:
 			return VisualShaderNode.PORT_TYPE_SCALAR
 		2:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 		3:
 			return VisualShaderNode.PORT_TYPE_TRANSFORM
 
-func _get_global_code(mode: int) -> String:
-	return """
+func _get_global_code(mode: Shader.Mode) -> String:
+	var value: String = """
 vec4 blenderColors(vec2 uv_1, vec2 uv_2, vec2 uv_3, vec4 grid_weights, sampler2D atlasTexture)
 {
 	vec4 quad_a, quad_b, quad_c;
@@ -86,19 +86,19 @@ vec4 blenderColors(vec2 uv_1, vec2 uv_2, vec2 uv_3, vec4 grid_weights, sampler2D
 	return quad_a * grid_weights.x + quad_b * grid_weights.y + quad_c * grid_weights.z;
 }
 
-vec3 normal_from_normalmap(vec4 normalTex, vec3 tangent, vec3 binormal, vec3 f_norm)
+vec3 normal_from_normalmap(vec4 normalTex, vec3 orthogonal, vec3 binormal, vec3 f_norm)
 {
 	vec3 normalmap;
 	normalmap.xy = normalTex.xy * 2.0 - 1.0;
 	normalmap.z = sqrt(max(0.0, 1.0 - dot(normalmap.xy, normalmap.xy)));
 	normalmap = normalize(normalmap);
-	return normalize(tangent * normalmap.x + binormal * normalmap.y + f_norm * normalmap.z);
+	return normalize(orthogonal * normalmap.x + binormal * normalmap.y + f_norm * normalmap.z);
 }
 
 vec3 blendedNormals(vec2 uv_1, vec3 f1_n, 
 					vec2 uv_2, vec3 f2_n, 
 					vec2 uv_3, vec3 f3_n, 
-					vec3 tangent, vec3 binormal,
+					vec3 orthogonal, vec3 binormal,
 					vec4 grid_weights, sampler2D atlasTexture)
 {
 	vec4 quad_a, quad_b, quad_c;
@@ -106,9 +106,9 @@ vec3 blendedNormals(vec2 uv_1, vec3 f1_n,
 	quad_a = textureLod(atlasTexture, uv_1, 0.0f);
 	quad_b = textureLod(atlasTexture, uv_2, 0.0f);
 	quad_c = textureLod(atlasTexture, uv_3, 0.0f);
-	vec3 norm1 = normal_from_normalmap(quad_a, tangent, binormal, f1_n);
-	vec3 norm2 = normal_from_normalmap(quad_b, tangent, binormal, f2_n);
-	vec3 norm3 = normal_from_normalmap(quad_c, tangent, binormal, f3_n);
+	vec3 norm1 = normal_from_normalmap(quad_a, orthogonal, binormal, f1_n);
+	vec3 norm2 = normal_from_normalmap(quad_b, orthogonal, binormal, f2_n);
+	vec3 norm3 = normal_from_normalmap(quad_c, orthogonal, binormal, f3_n);
 	return normalize(norm1 * grid_weights.x + norm2 * grid_weights.y + norm3 * grid_weights.z);
 }
 
@@ -127,8 +127,9 @@ vec2 recalculateUV(vec2 uv_f,  vec2 frame, vec2 xy_f, vec2 frame_size, float d_s
 	return clamp(uv_f, vec2(0), vec2(1));
 }
 	"""
+	return value
 
-func _get_code(input_vars: Array, output_vars: Array, mode: int, type: int) -> String:
+func _get_code(input_vars: Array[String], output_vars: Array[String], mode: Shader.Mode, type: VisualShader.Type) -> String:
 	var code = """
 vec2 quad_size = vec2(1f) / %s;
 float _depth_scale = %s;

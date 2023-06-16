@@ -25,7 +25,7 @@ func _init() -> void:
 	set_physics_process(false)
 	read_baking_profiles(profile_option_button)
 
-	profile_option_button.connect("item_selected",self, "_on_item_selected")
+	profile_option_button.connect("item_selected", Callable(self, "_on_item_selected"))
 	add_child(profile_option_button)
 
 

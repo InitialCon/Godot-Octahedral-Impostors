@@ -1,25 +1,25 @@
-tool
+@tool
 # based on: https://github.com/godot-extended-libraries/godot-lod/blob/master/addons/lod/lod_spatial.gd
-
-extends Spatial
-class_name OctaImpostor, "../icons/icon_octaimpostor.svg"
+@icon ("../icons/icon_octaimpostor.svg")
+extends Node3D
+class_name OctaImpostor
 
 const FileUtils = preload("baking/utils/file_utils.gd")
 const ProfileResource = preload("profile_resource.gd")
 const ProfilesDir = "res://addons/octahedral_impostors/profiles/"
 
-export var enable_lod := true
-export(float, 0.0, 1000.0, 0.1) var lod_distance := 50
-export(Resource) var profile = null
-export(int, "1024", "2048", "4096") var atlas_resolution = 1
-export(int) var frames_xy = 12
-export(bool) var is_full_sphere = false
-export(bool) var optimize_atlas_size = false
-export(bool) var create_shadow_mesh = false
+@export var enable_lod := true
+@export_range(0.0, 1000.0, 0.1) var lod_distance: float = 50 # (float, 0.0, 1000.0, 0.1)
+@export var profile: Resource = null
+@export_enum("1024", "2048", "4096") var atlas_resolution: int = 1 # (int, "1024", "2048", "4096")
+@export var frames_xy: int = 12
+@export var is_full_sphere: bool = false
+@export var optimize_atlas_size: bool = false
+@export var create_shadow_mesh: bool = false
 
 var refresh_rate := 0.25
 var counter := 0.0
-var editor_camera :Camera = null
+var editor_camera :Camera3D = null
 
 #TODO: dynamically load baking profiles as optionbutton
 
@@ -40,7 +40,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# We need a camera to do the rest.
-	var camera := get_viewport().get_camera()
+	var camera := get_viewport().get_camera_3d()
 	if Engine.is_editor_hint() && editor_camera != null:
 		camera = editor_camera
 	if camera == null:

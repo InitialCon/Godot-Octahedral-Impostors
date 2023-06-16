@@ -7,23 +7,23 @@
 material = ExtResource( 1 )
 size = Vector2( 2, 2 )
 
-[node name="MultiBakeScene" type="Spatial"]
+[node name="MultiBakeScene" type="Node3D"]
 script = ExtResource( 2 )
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.18746 )
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.18746 )
 projection = 1
 current = true
 fov = 45.0
 far = 200.0
 
-[node name="PostProcess" type="MeshInstance" parent="Camera"]
+[node name="PostProcess" type="MeshInstance3D" parent="Camera3D"]
 visible = false
 cast_shadow = 0
 extra_cull_margin = 16384.0
 mesh = SubResource( 1 )
 material/0 = null
 
-[node name="BakedContainer" type="Spatial" parent="."]
+[node name="BakedContainer" type="Node3D" parent="."]
 
-[node name="DirectionalLight" type="DirectionalLight" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]

@@ -1,4 +1,4 @@
-tool
+@tool
 extends VisualShaderNodeCustom
 class_name VisualShaderNodeOCtaImpFragSamp
 
@@ -49,11 +49,11 @@ func _get_output_port_name(port: int):
 func _get_output_port_type(port: int):
 	match port:
 		0:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 		1:
 			return VisualShaderNode.PORT_TYPE_SCALAR
 
-func _get_code(input_vars: Array, output_vars: Array, mode: int, type: int) -> String:
+func _get_code(input_vars: Array[String], output_vars: Array[String], mode: Shader.Mode, type: VisualShader.Type) -> String:
 	var code = """
 mat4 imp_data = %s;
 vec2 uv_f1 = vec2(imp_data[0][0], imp_data[0][1]);

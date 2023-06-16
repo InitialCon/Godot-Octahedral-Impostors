@@ -1,4 +1,4 @@
-tool
+@tool
 extends VisualShaderNodeCustom
 class_name VisualShaderNodeOCtaImpVert
 
@@ -48,7 +48,7 @@ func _get_input_port_type(port: int):
 		3:
 			return VisualShaderNode.PORT_TYPE_SCALAR
 		4:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 
 func _get_output_port_count() -> int:
 	return 4
@@ -60,22 +60,22 @@ func _get_output_port_name(port: int):
 		1:
 			return "normal"
 		2:
-			return "tangent"
+			return "orthogonal"
 		3:
 			return "binormal"
 
 func _get_output_port_type(port: int):
 	match port:
 		0:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 		1:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 		2:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 		3:
-			return VisualShaderNode.PORT_TYPE_VECTOR
+			return VisualShaderNode.PORT_TYPE_VECTOR_3D
 
-func _get_global_code(mode: int) -> String:
+func _get_global_code(mode: Shader.Mode) -> String:
 	return """
 varying vec2 uv_frame1;
 varying vec2 xy_frame1;
@@ -303,20 +303,20 @@ vec3 projectOnPlaneBasis(vec3 ray, vec3 plane_normal, vec3 plane_x, vec3 plane_y
 }
 	"""
 
-func _get_code(input_vars: Array, output_vars: Array, mode: int, type: int) -> String:
+func _get_code(input_vars: Array[String], output_vars: Array[String], mode: Shader.Mode, type: VisualShader.Type) -> String:
 	var uv = "UV"
 	if input_vars[4]:
 		uv = input_vars[4]
 	var code = """
-righ_vector = WORLD_MATRIX[0].xyz;
+righ_vector = MODEL_MATRIX[0].xyz;
 vec2 _imposterFrames = vec2(%s);
 bool _isFullSphere = %s;
 float _scale = %s;
 float _aabb_max = %s;
 vec2 _uv = %s.xy;
 vec2 framesMinusOne = _imposterFrames - vec2(1);
-vec3 cameraPos_WS = (CAMERA_MATRIX * vec4(vec3(0), 1.0)).xyz;
-vec3 cameraPos_OS = (inverse(WORLD_MATRIX) * vec4(cameraPos_WS, 1.0)).xyz;
+vec3 cameraPos_WS = (INV_VIEW_MATRIX * vec4(vec3(0), 1.0)).xyz;
+vec3 cameraPos_OS = (inverse(MODEL_MATRIX) * vec4(cameraPos_WS, 1.0)).xyz;
 
 //TODO: check if this is correct. We are using orho projected images, so
 // camera far away

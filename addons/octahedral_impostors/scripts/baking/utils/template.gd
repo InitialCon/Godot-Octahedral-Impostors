@@ -4,7 +4,7 @@ var template: String
 
 
 func load_file(filename: String) -> String:
-	var f = File.new()
+	var f = FileAccess
 
 	if not f.file_exists(filename):
 		print('Template [%s] does not exist' % filename)
@@ -12,7 +12,7 @@ func load_file(filename: String) -> String:
 
 	var result = {}
 
-	f.open(filename, f.READ)
+	f = f.open(filename, f.READ)
 	result = f.get_as_text()
 	f.close()
 	return result
@@ -28,7 +28,7 @@ func fill(parameter: String, value: String) -> void:
 
 
 func save(save_path: String) -> void:
-	var f = File.new()
-	f.open(save_path, f.WRITE)
+	var f = FileAccess
+	f = f.open(save_path, f.WRITE)
 	f.store_string(template)
 	f.close()

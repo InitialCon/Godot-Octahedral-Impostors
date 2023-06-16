@@ -1,6 +1,6 @@
-tool
+@tool
 
-extends Control
+extends Window
 
 const ProfileResource = preload("profile_resource.gd")
 const FileUtils = preload("baking/utils/file_utils.gd")
@@ -10,22 +10,22 @@ const ProfilesDir = "res://addons/octahedral_impostors/profiles/"
 const icon_checkbox_checked := preload("res://addons/octahedral_impostors/icons/checkbox_checked.svg")
 const icon_checkbox_unchecked := preload("res://addons/octahedral_impostors/icons/checkbox_unchecked.svg")
 
-onready var queue_tree: Tree = $VBoxContainer/TabContainer/QueuedScenes/Panel/QueuedScenes
+@onready var queue_tree: Tree = $VBoxContainer/TabContainer/QueuedScenes/Panel/QueuedScenes
 
-onready var directory_save_dialog: FileDialog = $DirectorySelectDialog
-onready var directory_path_edit: LineEdit = $VBoxContainer/TabContainer/Settings/HBoxContainer/DirectoryPathEdit
-onready var generate_button: Button = $VBoxContainer/PanelContainer/MarginContainer/GridContainer/HBoxContainer2/GenerateButton
-onready var progress_bar: ProgressBar = $VBoxContainer/PanelContainer/MarginContainer/GridContainer/HBoxContainer/ProgressBar
-onready var settings_container: Container = $VBoxContainer/TabContainer
-onready var info_dialog: AcceptDialog = $InfoDialog
-onready var confirm_dialog: ConfirmationDialog = $ConfirmationBakeDialog
-onready var baker = $BakerScript
+@onready var directory_save_dialog: FileDialog = $DirectorySelectDialog
+@onready var directory_path_edit: LineEdit = $VBoxContainer/TabContainer/Settings/HBoxContainer/DirectoryPathEdit
+@onready var generate_button: Button = $VBoxContainer/PanelContainer/MarginContainer/GridContainer/HBoxContainer2/GenerateButton
+@onready var progress_bar: ProgressBar = $VBoxContainer/PanelContainer/MarginContainer/GridContainer/HBoxContainer/ProgressBar
+@onready var settings_container: Container = $VBoxContainer/TabContainer
+@onready var info_dialog: AcceptDialog = $InfoDialog
+@onready var confirm_dialog: ConfirmationDialog = $ConfirmationBakeDialog
+@onready var baker = $BakerScript
 
-onready var profile_option_button: OptionButton = $VBoxContainer/TabContainer/Settings/GridContainer/ProfileOptionButton
-onready var profile_checkbox: CheckBox = $VBoxContainer/TabContainer/Settings/GridContainer/OverwriteProfileCheckbox
+@onready var profile_option_button: OptionButton = $VBoxContainer/TabContainer/Settings/GridContainer/ProfileOptionButton
+@onready var profile_checkbox: CheckBox = $VBoxContainer/TabContainer/Settings/GridContainer/OverwriteProfileCheckbox
 
-onready var resolution_option_button: OptionButton = $VBoxContainer/TabContainer/Settings/GridContainer/ResolutionOptionButton
-onready var resolution_checkbox: CheckBox = $VBoxContainer/TabContainer/Settings/GridContainer/OverwriteResolutionCheckbox
+@onready var resolution_option_button: OptionButton = $VBoxContainer/TabContainer/Settings/GridContainer/ResolutionOptionButton
+@onready var resolution_checkbox: CheckBox = $VBoxContainer/TabContainer/Settings/GridContainer/OverwriteResolutionCheckbox
 
 var plugin: EditorPlugin
 var octa_imp_items := []
@@ -66,7 +66,7 @@ func get_selected_octaimpostor_nodes() -> Array:
 	return result
 
 
-func set_scene_to_bake(_node: Spatial) -> void:
+func set_scene_to_bake(_node: Node3D) -> void:
 	progress_bar.value = 0
 	baker.plugin = plugin
 	baker.baking_viewport = $ViewportBaking
@@ -74,7 +74,7 @@ func set_scene_to_bake(_node: Spatial) -> void:
 	read_baking_profiles(profile_option_button)
 	scene_root = get_tree().get_edited_scene_root()
 	if scene_root == null:
-		scene_root = Spatial.new() # just to ommit error in console
+		scene_root = Node3D.new() # just to ommit error in console
 	var imp_nodes := get_all_octaimpostor_nodes_in_scene(scene_root)
 	print(imp_nodes)
 
@@ -104,9 +104,9 @@ func change_disabled_child_controls(node: Node, disabled: bool) -> void:
 
 
 func bake_scene(node: OctaImpostor) -> void:
-	var dir = Directory.new()
+	var dir = DirAccess.open("res://")
 	var gen_dir = String(node.get_path()).sha256_text()
-	var dir_loc = directory_path_edit.text.plus_file(gen_dir)
+	var dir_loc = directory_path_edit.text.path_join(gen_dir)
 	var save_file = dir_loc.plus_file(impostor_scene_filename)
 
 	dir.make_dir_recursive(dir_loc)
@@ -129,7 +129,7 @@ func bake_scene(node: OctaImpostor) -> void:
 		multiplier = pow(2, resolution_option_button.selected)
 	baker.atlas_resolution = 1024 * multiplier
 	baker.set_scene_to_bake(node, true)
-	yield(baker.bake(), "completed")
+	await baker.bake().completed
 
 
 func generate() -> void:
@@ -143,7 +143,7 @@ func generate() -> void:
 			if child.name in generated_nodes:
 				x.remove_child(child)
 		bake_scene(x)
-		yield(baker, "bake_done")
+		await baker.bake_done
 		if baker.generated_impostor != null:
 			var local_imp = baker.generated_impostor.duplicate()
 			local_imp.name = "generated-impostor"
@@ -173,7 +173,7 @@ func _on_QueuedScenes_button_pressed(item: TreeItem , column: int, id: int) -> v
 
 
 func _on_GenerateButton_pressed() -> void:
-	var directory = Directory.new();
+	var directory = DirAccess.open("res://")
 	var dir_exists: bool = directory.dir_exists(directory_path_edit.text)
 	if not dir_exists or directory_path_edit.text in prohibited_dirs:
 		info_dialog.dialog_text = "Save directory must exist and must be correct!"

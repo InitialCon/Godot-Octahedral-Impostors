@@ -1,5 +1,5 @@
-tool
-extends WindowDialog
+@tool
+extends Window
 
 const ProfileResource = preload("profile_resource.gd")
 const FileUtils = preload("baking/utils/file_utils.gd")
@@ -8,9 +8,9 @@ const ProfilesDir = "res://addons/octahedral_impostors/profiles/"
 
 var plugin: EditorPlugin
 
-onready var baker = $BakerScript
+@onready var baker = $BakerScript
 
-onready var profile_option_button: OptionButton = $MainContainer/Panel/container/HBoxContainer5/OptionButtonProfile
+@onready var profile_option_button: OptionButton = $MainContainer/Panel/container/HBoxContainer5/OptionButtonProfile
 
 func read_baking_profiles(profile_button: OptionButton) -> Array:
 	profile_button.clear()
@@ -24,7 +24,7 @@ func read_baking_profiles(profile_button: OptionButton) -> Array:
 	return profiles
 
 
-func set_scene_to_bake(node: Spatial) -> void:
+func set_scene_to_bake(node: Node3D) -> void:
 	baker.set_scene_to_bake(node)
 
 

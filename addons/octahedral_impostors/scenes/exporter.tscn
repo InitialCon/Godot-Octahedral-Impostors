@@ -2,5 +2,5 @@
 
 [ext_resource path="res://addons/octahedral_impostors/scripts/baking/exporter.gd" type="Script" id=1]
 
-[node name="Exporter" type="Spatial"]
+[node name="Exporter" type="Node3D"]
 script = ExtResource( 1 )

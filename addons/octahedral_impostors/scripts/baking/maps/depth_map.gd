@@ -1,4 +1,4 @@
-tool
+@tool
 
 # extends OctahedralImpostorMapBaker
 extends "../map_baker.gd"
@@ -17,8 +17,8 @@ func is_dilatated() -> bool:
 	return true
 
 
-func setup_postprocess_plane(plane: Mesh, camera: Camera) -> bool:
-	depth_material.set_shader_param("depth_scaler", camera.far )
+func setup_postprocess_plane(plane: Mesh, camera: Camera3D) -> bool:
+	depth_material.set_shader_parameter("depth_scaler", camera.far )
 	plane.surface_set_material(0,depth_material)
 	return true
 

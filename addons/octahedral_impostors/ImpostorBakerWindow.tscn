@@ -1,291 +1,202 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=7 format=3 uid="uid://bcgx53je7hvtf"]
 
-[ext_resource path="res://addons/octahedral_impostors/scenes/dilatate_pipeline.tscn" type="PackedScene" id=1]
-[ext_resource path="res://addons/octahedral_impostors/scripts/impostor_baker_window.gd" type="Script" id=2]
-[ext_resource path="res://addons/octahedral_impostors/scenes/exporter.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/octahedral_impostors/profiles/standard.tres" type="Resource" id=4]
-[ext_resource path="res://addons/octahedral_impostors/scripts/baking/baker.gd" type="Script" id=5]
-[ext_resource path="res://addons/octahedral_impostors/profiles/light.tres" type="Resource" id=6]
+[ext_resource type="PackedScene" path="res://addons/octahedral_impostors/scenes/dilatate_pipeline.tscn" id="1"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/impostor_baker_window.gd" id="2"]
+[ext_resource type="PackedScene" path="res://addons/octahedral_impostors/scenes/exporter.tscn" id="3"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/baker.gd" id="5"]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.231373, 0.231373, 0.32549, 0.47451 )
+[sub_resource type="StyleBoxFlat" id="1"]
+bg_color = Color(0.231373, 0.231373, 0.32549, 0.47451)
 
-[sub_resource type="Environment" id=2]
-ambient_light_color = Color( 1, 1, 1, 1 )
+[sub_resource type="QuadMesh" id="4"]
+size = Vector2(2, 2)
 
-[sub_resource type="World" id=3]
-environment = SubResource( 2 )
-
-[sub_resource type="QuadMesh" id=4]
-size = Vector2( 2, 2 )
-
-[node name="ImpostorBaker" type="WindowDialog"]
-visible = true
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -360.0
-margin_top = -237.5
-margin_right = 360.0
-margin_bottom = 237.5
-window_title = "Create Octahedral Impostor"
-resizable = true
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="ImpostorBaker" type="Window"]
+size = Vector2i(300, 400)
+script = ExtResource("2")
 
 [node name="MainContainer" type="HSplitContainer" parent="."]
+clip_contents = true
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_clip_content = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Panel" type="Panel" parent="MainContainer"]
-margin_right = 220.0
-margin_bottom = 475.0
-rect_min_size = Vector2( 220, 0 )
-custom_styles/panel = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("1")
 
 [node name="container" type="VBoxContainer" parent="MainContainer/Panel"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 4.0
-margin_right = -7.0
-custom_constants/separation = 6
-__meta__ = {
-"_edit_use_anchors_": false
-}
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -7.0
+theme_override_constants/separation = 6
 
 [node name="Generate" type="Button" parent="MainContainer/Panel/container"]
-margin_right = 209.0
-margin_bottom = 20.0
+layout_mode = 2
 text = "Generate"
 
 [node name="progress" type="ProgressBar" parent="MainContainer/Panel/container"]
-margin_top = 26.0
-margin_right = 209.0
-margin_bottom = 40.0
+layout_mode = 2
 max_value = 1.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 46.0
-margin_right = 209.0
-margin_bottom = 70.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="MainContainer/Panel/container/HBoxContainer"]
-margin_right = 131.0
-margin_bottom = 24.0
-hint_tooltip = "How much space the object covers in the atlas tiles."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "How much space the object covers in the atlas tiles."
+mouse_filter = 0
 text = "Atlas Coverage"
-valign = 1
 
 [node name="SpinBoxCoverage" type="SpinBox" parent="MainContainer/Panel/container/HBoxContainer"]
-margin_left = 135.0
-margin_right = 209.0
-margin_bottom = 24.0
+layout_mode = 2
 value = 100.0
 allow_greater = true
 suffix = "%"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 76.0
-margin_right = 209.0
-margin_bottom = 100.0
+layout_mode = 2
 
 [node name="Label4" type="Label" parent="MainContainer/Panel/container/HBoxContainer3"]
-margin_right = 131.0
-margin_bottom = 24.0
-hint_tooltip = "The number of rows and columns generated in the atlases."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "The number of rows and columns generated in the atlases."
+mouse_filter = 0
 text = "Grid size"
-valign = 1
 
 [node name="SpinBoxGridSize" type="SpinBox" parent="MainContainer/Panel/container/HBoxContainer3"]
-margin_left = 135.0
-margin_right = 209.0
-margin_bottom = 24.0
+layout_mode = 2
 min_value = 2.0
 max_value = 64.0
 value = 16.0
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 106.0
-margin_right = 209.0
-margin_bottom = 126.0
+layout_mode = 2
 
 [node name="Label2" type="Label" parent="MainContainer/Panel/container/HBoxContainer2"]
-margin_right = 144.0
-margin_bottom = 20.0
-hint_tooltip = "The resolution of the atlases."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "The resolution of the atlases."
+mouse_filter = 0
 text = "Atlas Resolution"
-valign = 1
 
 [node name="OptionButtonImgRes" type="OptionButton" parent="MainContainer/Panel/container/HBoxContainer2"]
-margin_left = 148.0
-margin_right = 209.0
-margin_bottom = 20.0
-text = "2048"
-items = [ "1024", null, false, 1, null, "2048", null, false, 2, null, "4096", null, false, 3, null, "8192", null, false, 4, null ]
+layout_mode = 2
+item_count = 3
 selected = 1
+popup/item_0/text = "1024"
+popup/item_0/id = 0
+popup/item_1/text = "2048"
+popup/item_1/id = 1
+popup/item_2/text = "4096"
+popup/item_2/id = 2
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 132.0
-margin_right = 209.0
-margin_bottom = 156.0
+layout_mode = 2
 
 [node name="Label2" type="Label" parent="MainContainer/Panel/container/HBoxContainer4"]
-margin_right = 181.0
-margin_bottom = 24.0
-hint_tooltip = "Whether the tiles are generated for the entire sphere. Set to true if the impostor will be viewed from all angles, including from the bottom."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "Whether the tiles are generated for the entire sphere. Set to true if the impostor will be viewed from all angles, including from the bottom."
+mouse_filter = 0
 text = "Full Sphere"
-valign = 1
 
 [node name="CheckboxFullSphere" type="CheckBox" parent="MainContainer/Panel/container/HBoxContainer4"]
-margin_left = 185.0
-margin_right = 209.0
-margin_bottom = 24.0
+layout_mode = 2
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 162.0
-margin_right = 209.0
-margin_bottom = 182.0
+layout_mode = 2
 
 [node name="Label3" type="Label" parent="MainContainer/Panel/container/HBoxContainer5"]
-margin_right = 148.0
-margin_bottom = 20.0
-hint_tooltip = "Whether the impostor should use a high quality shader."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "Whether the impostor should use a high quality shader."
+mouse_filter = 0
 text = "Profile"
-valign = 1
 
 [node name="OptionButtonProfile" type="OptionButton" parent="MainContainer/Panel/container/HBoxContainer5"]
-margin_left = 152.0
-margin_right = 209.0
-margin_bottom = 20.0
-text = "light"
-items = [ "light", null, false, 0, ExtResource( 6 ), "standard", null, false, 1, ExtResource( 4 ) ]
+layout_mode = 2
+item_count = 2
 selected = 0
+popup/item_0/text = "standard"
+popup/item_0/id = 0
+popup/item_1/text = "light"
+popup/item_1/id = 1
 
 [node name="HBoxContainer7" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 188.0
-margin_right = 209.0
-margin_bottom = 212.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="MainContainer/Panel/container/HBoxContainer7"]
-margin_right = 181.0
-margin_bottom = 24.0
-hint_tooltip = "Exports data atlas images in reduced resolution."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "Exports data atlas images in reduced resolution."
+mouse_filter = 0
 text = "Optimize Size"
-valign = 1
 
 [node name="CheckBoxHalfResolution" type="CheckBox" parent="MainContainer/Panel/container/HBoxContainer7"]
-margin_left = 185.0
-margin_right = 209.0
-margin_bottom = 24.0
+layout_mode = 2
 
 [node name="HBoxContainer6" type="HBoxContainer" parent="MainContainer/Panel/container"]
-margin_top = 218.0
-margin_right = 209.0
-margin_bottom = 242.0
+layout_mode = 2
 
 [node name="Label" type="Label" parent="MainContainer/Panel/container/HBoxContainer6"]
-margin_right = 181.0
-margin_bottom = 24.0
-hint_tooltip = "Whether to export the impostor itself. Disable if you just want the atlas images."
-mouse_filter = 0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+tooltip_text = "Whether to export the impostor itself. Disable if you just want the atlas images."
+mouse_filter = 0
 text = "Export with Shadow Mesh"
-valign = 1
 
 [node name="CheckBoxShadow" type="CheckBox" parent="MainContainer/Panel/container/HBoxContainer6"]
-margin_left = 185.0
-margin_right = 209.0
-margin_bottom = 24.0
+layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="MainContainer"]
-margin_left = 232.0
-margin_right = 720.0
-margin_bottom = 475.0
-rect_min_size = Vector2( 475, 475 )
-rect_clip_content = true
+clip_contents = true
+custom_minimum_size = Vector2(475, 475)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-expand = true
+expand_mode = 1
 stretch_mode = 6
 
 [node name="FileDialog" type="FileDialog" parent="."]
-anchor_left = 0.14
-anchor_top = 0.151
-anchor_right = 0.864
-anchor_bottom = 0.806
-margin_left = -0.128601
-margin_top = 0.0906982
-margin_right = -0.104614
-margin_bottom = -0.034317
-window_title = "Save your impostor"
 dialog_hide_on_ok = true
-current_file = "impostor.tscn"
-current_path = "res://impostor.tscn"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="ViewportBaking" type="Viewport" parent="."]
-size = Vector2( 2048, 2048 )
-size_override_stretch = true
-own_world = true
-world = SubResource( 3 )
+[node name="ViewportBaking" type="SubViewport" parent="."]
 transparent_bg = true
 handle_input_locally = false
-msaa = 3
-hdr = false
-keep_3d_linear = true
 debug_draw = 1
+size = Vector2i(2048, 2048)
+size_2d_override_stretch = true
 render_target_update_mode = 3
 
-[node name="BakedContainer" type="Spatial" parent="ViewportBaking"]
+[node name="BakedContainer" type="Node3D" parent="ViewportBaking"]
 
-[node name="PostProcess" type="MeshInstance" parent="ViewportBaking"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.45593 )
+[node name="PostProcess" type="MeshInstance3D" parent="ViewportBaking"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.45593)
 visible = false
 cast_shadow = 0
 extra_cull_margin = 16384.0
-mesh = SubResource( 4 )
-material/0 = null
+mesh = SubResource("4")
 
-[node name="BakerScript" type="Spatial" parent="."]
-script = ExtResource( 5 )
+[node name="BakerScript" type="Node3D" parent="."]
+script = ExtResource("5")
 
-[node name="Exporter" parent="BakerScript" instance=ExtResource( 3 )]
+[node name="Exporter" parent="BakerScript" instance=ExtResource("3")]
 
-[node name="DilatatePipeline" parent="BakerScript" instance=ExtResource( 1 )]
+[node name="DilatatePipeline" parent="BakerScript" instance=ExtResource("1")]
 
-[connection signal="popup_hide" from="." to="." method="_on_ImpostorBaker_popup_hide"]
 [connection signal="pressed" from="MainContainer/Panel/container/Generate" to="." method="_on_Generate_pressed"]
 [connection signal="value_changed" from="MainContainer/Panel/container/HBoxContainer/SpinBoxCoverage" to="." method="_on_SpinBox_value_changed"]
 [connection signal="value_changed" from="MainContainer/Panel/container/HBoxContainer3/SpinBoxGridSize" to="." method="_on_SpinBoxGridSize_value_changed"]

@@ -1,9 +1,9 @@
 extends Resource
 
-export(String) var name
+@export var name: String
 
-export(GDScript) var map_baker_with_alpha_mask
-export(Array, GDScript) var standard_map_bakers
+@export var map_baker_with_alpha_mask: GDScript
+@export var standard_map_bakers: Array[GDScript] # (Array, GDScript)
 
-export(Shader) var main_shader
-export(Shader) var shadows_shader
+@export var main_shader: Shader
+@export var shadows_shader: Shader
