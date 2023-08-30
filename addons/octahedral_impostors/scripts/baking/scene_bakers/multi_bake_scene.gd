@@ -26,12 +26,13 @@ func get_pivot_translation() -> Vector3:
 
 
 func get_scene_to_bake_aabb(node := scene_to_bake) -> AABB:
-	var aabb := AABB(Vector3.ONE * 65536.0, -Vector3.ONE * 65536.0 * 2.0)
+	#var aabb := AABB(Vector3.ONE * 65536.0, -Vector3.ONE * 65536.0 * 2.0) # what is this??
+	var aabb := AABB()
 	if node is GeometryInstance3D and not node is CSGShape3D:
-		aabb = aabb.merge(node.get_transformed_aabb())
+		aabb = aabb.merge(node.global_transform * node.mesh.get_aabb().abs()) # This assumes it is a mesh instance. TODO: Generalize
 	for child in node.get_children():
 		aabb = aabb.merge(get_scene_to_bake_aabb(child))
-	return aabb
+	return aabb.abs()
 
 
 func update_scene_to_bake_transform() -> void:
@@ -108,10 +109,10 @@ func set_scene_to_bake(node: Node3D) -> void:
 	for x in frames_xy:
 		for y in frames_xy:
 			create_frame_xy_scene(Vector2(x,y))
-	await get_tree().idle_frame
-	await get_tree().idle_frame
-	await get_tree().idle_frame
-	var atlas_image = viewport.get_texture().get_data()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var atlas_image = viewport.get_texture().get_image()
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
 	set_atlas_image(atlas_image)

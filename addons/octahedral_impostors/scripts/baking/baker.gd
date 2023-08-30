@@ -6,7 +6,6 @@ const MeshUtils = preload("utils/mesh_utils.gd")
 const MapBaker = preload("map_baker.gd")
 const SceneBaker = preload("scene_baker.gd")
 const Exporter = preload("../../scenes/exporter.tscn")
-const ProfileResource = preload("../profile_resource.gd")
 
 const MultiBakeScene = preload("../../scenes/multi_bake_scene.tscn")
 
@@ -24,7 +23,12 @@ var frames_xy := 12
 var is_full_sphere := false
 var create_shadow_mesh := false
 var plugin: EditorPlugin = null
-var profile: ProfileResource = preload("res://addons/octahedral_impostors/profiles/standard.tres")
+var profile: ProfileResource = preload("res://addons/octahedral_impostors/profiles/standard.tres"):
+	get:
+		if profile == null:
+			print("Previous load failed. Getting standard...")
+			profile = load("res://addons/octahedral_impostors/profiles/standard.tres")
+		return profile
 var atlas_resolution = 2048
 var optimize_atlas_size = false
 var atlas_coverage = 1.0
@@ -61,15 +65,23 @@ func postprocess_plane_cleanup() -> void:
 
 func preview_map(atlas_image: Image):
 	var tex: ImageTexture = ImageTexture.new()
-	tex.flags = 0
+	#tex.flags = 0
 	tex.create_from_image(atlas_image)
 	if texture_preview != null:
 		texture_preview.texture = tex
 
 
 func bake_map(map_baker: MapBaker, scene: Node3D, vp: SubViewport, postprocess: Mesh) -> void:
-	vp.keep_3d_linear = not map_baker.is_srgb() or map_baker.is_normal_map()
-	map_baker.viewport_setup(vp)
+	#vp.keep_3d_linear = not map_baker.is_srgb() or map_baker.is_normal_map() # Invalid set index 'keep_3d_linear' (on base: 'SubViewport') with value of type 'bool'
+	# Workaround shader code: 
+	#		vec3 linear_to_srgb(vec3 color) { 
+	# 			return max(vec3(1.055) * pow(color, vec3(0.416666667)) - vec3(0.055), vec3(0.0)); 
+	# 		} 
+	#
+	# 		vec3 srgb_to_linear(vec3 color) { 
+	# 			return color * (color * (color * 0.305306011 + 0.682171111) + 0.012522878); 
+	# 		} 
+	map_baker.viewport_setup(vp) 
 	if map_baker.setup_postprocess_plane(postprocess, scene_baker.get_camera_3d()):
 		baking_postprocess_plane.visible = true
 	map_baker_process_materials(map_baker, scene)
@@ -77,7 +89,7 @@ func bake_map(map_baker: MapBaker, scene: Node3D, vp: SubViewport, postprocess: 
 	await scene_baker.atlas_ready
 	var result_image = scene_baker.atlas_image
 	if map_baker.is_dilatated():
-		await dilatation_pipeline.dilatate(result_image, map_baker.use_as_dilatate_mask()).completed
+		await dilatation_pipeline.dilatate(result_image, map_baker.use_as_dilatate_mask())
 		result_image = dilatation_pipeline.processed_image
 	exporter.save_map(map_baker, result_image)
 	preview_map(result_image)
@@ -95,6 +107,7 @@ func setup_bake_resolution(scene_baker: SceneBaker, map_baker: MapBaker) -> void
 
 
 func bake():
+	print("Profile: %s" % profile)
 	print("Baking using profile: ", profile.name)
 	scene_baker = MultiBakeScene.instantiate()
 	exporter.export_path = save_path.get_base_dir()
@@ -115,8 +128,8 @@ func bake():
 	print("Baking main map: ", map_baker.get_name())
 	setup_bake_resolution(scene_baker, map_baker)
 	await bake_map(map_baker, scene_to_bake, baking_viewport, baking_postprocess_plane.mesh)
-	await get_tree().idle_frame
-	await get_tree().idle_frame
+	await get_tree().process_frame 
+	await get_tree().process_frame
 
 	exporter.position_offset = scene_baker.get_pivot_translation()
 
@@ -125,18 +138,18 @@ func bake():
 		print("Baking: ", map_baker.get_name())
 		setup_bake_resolution(scene_baker, map_baker)
 		await bake_map(map_baker, scene_to_bake, baking_viewport, baking_postprocess_plane.mesh)
-		await get_tree().idle_frame
-		await get_tree().idle_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 	
 	print("Exporting...")
 	var shader_mat := ShaderMaterial.new()
-	shader_mat.gdshader = profile.main_shader
+	shader_mat.shader = profile.main_shader
 	exporter.scale_instance = scene_baker.get_camera_3d().size / 2.0
 	var shader_shadow_mat: ShaderMaterial = null
 	if create_shadow_mesh and profile.shadows_shader != null:
 		shader_shadow_mat = ShaderMaterial.new()
 		shader_shadow_mat.gdshader = profile.shadows_shader
-	await exporter.export_scene(shader_mat, false, shader_shadow_mat).completed
+	await exporter.export_scene(shader_mat, false, shader_shadow_mat)
 	generated_impostor = exporter.generated_impostor
 	generated_shadow_impostor = exporter.generated_shadow_impostor
 

@@ -1,0 +1,36 @@
+[gd_scene load_steps=8 format=3 uid="uid://crmxowf476by5"]
+
+[ext_resource type="Shader" path="res://addons/octahedral_impostors/materials/shaders/ImpostorShader.gdshader" id="1_4oqmb"]
+[ext_resource type="Texture2D" uid="uid://c36764tlpvmap" path="res://testassets/result_albedo.png" id="2_x23qc"]
+[ext_resource type="Texture2D" uid="uid://d0x5p0mo75ukv" path="res://testassets/result_depth.png" id="3_p5qoc"]
+[ext_resource type="Texture2D" uid="uid://bjaq00lbdqwby" path="res://testassets/result_normal.png" id="4_cd245"]
+[ext_resource type="Texture2D" uid="uid://b8mgewr04upp" path="res://testassets/result_orm.png" id="5_6to1e"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8wrg2"]
+render_priority = 0
+shader = ExtResource("1_4oqmb")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 1.0
+shader_parameter/roughness = 1.0
+shader_parameter/imposterFrames = Vector2(12, 12)
+shader_parameter/positionOffset = Vector3(0, -0.015625, 0.0220268)
+shader_parameter/isFullSphere = false
+shader_parameter/alpha_clamp = 0.5
+shader_parameter/dither = false
+shader_parameter/scale = 1.81943
+shader_parameter/depth_scale = 1.0
+shader_parameter/normalmap_depth = 1.0
+shader_parameter/aabb_max = 0.909716
+shader_parameter/imposterTextureAlbedo = ExtResource("2_x23qc")
+shader_parameter/imposterTextureNormal = ExtResource("4_cd245")
+shader_parameter/imposterTextureDepth = ExtResource("3_p5qoc")
+shader_parameter/imposterTextureOrm = ExtResource("5_6to1e")
+
+[sub_resource type="QuadMesh" id="QuadMesh_44ruu"]
+material = SubResource("ShaderMaterial_8wrg2")
+
+[node name="Impostor" type="Node3D"]
+
+[node name="mesh-impostor" type="MeshInstance3D" parent="."]
+mesh = SubResource("QuadMesh_44ruu")

@@ -36,17 +36,19 @@ func _enter_tree() -> void:
 	button.flat = true
 	button.text = "Convert to Impostor"
 	button.hide()
-	button.connect("pressed", Callable(self, "_on_Button_pressed"))
+	button.connect("pressed", _on_Button_pressed.bind())
 	add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, button)
 	
 	converter = preload("ImpostorBakerWindow.tscn").instantiate()
 	converter.plugin = self
+	converter.hide()
 	get_editor_interface().get_base_control().add_child(converter)
 
 	batch_converter =  preload("ImpostorQueueWindow.tscn").instantiate()
 	batch_converter.plugin = self
+	batch_converter.hide()
 	get_editor_interface().get_base_control().add_child(batch_converter)
-	add_tool_menu_item(tool_menu_text, Callable(self, "batch_baking"))
+	add_tool_menu_item(tool_menu_text, batch_baking.bind())
 
 	octa_impostor_editor_inspector = preload("scripts/octa_impostor_editor_inspector_plugin.gd").new()
 	add_inspector_plugin(octa_impostor_editor_inspector)
@@ -63,11 +65,13 @@ func _exit_tree() -> void:
 
 func _on_Button_pressed() -> void:
 	if selected_object:
+		converter.show()
 		converter.popup_centered()
 		converter.set_scene_to_bake(selected_object)
 
 
 func batch_baking(ud): 
+	batch_converter.show()
 	batch_converter.popup_centered()
 	batch_converter.set_scene_to_bake(null)
 
