@@ -76,6 +76,7 @@ func create_frame_xy_scene(frame: Vector2) -> void:
 
 
 func prepare_scene(node: Node3D) -> void:
+	print("Preparing scene")
 	scene_to_bake = node.duplicate()
 	# we need to add this scene to a tree to recalculate aabb
 	$BakedContainer.add_child(scene_to_bake)
@@ -100,6 +101,7 @@ func prepare_viewport(vp: SubViewport) -> void:
 
 
 func set_scene_to_bake(node: Node3D) -> void:
+	print("Setting scene to bake - multi")
 	var viewport = get_viewport()
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	prepare_viewport(viewport)

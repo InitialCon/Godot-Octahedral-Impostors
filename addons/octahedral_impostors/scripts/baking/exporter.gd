@@ -71,7 +71,7 @@ func wait_on_resources() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 
-	print("Resource should now exists...")
+	print("Resource should now exist...")
 	for counter in saved_maps.size() * 2.0:
 		await get_tree().process_frame
 	

@@ -1,0 +1,7 @@
+res://addons/octahedral_impostors/scenes/exporter.tscn
+res://addons/octahedral_impostors/scripts/baking/exporter.gd
+res://assets/monkey/monkey.tscn
+res://addons/octahedral_impostors/scripts/baking/baker.gd
+res://addons/octahedral_impostors/scripts/impostor_baker_window.gd
+res://addons/octahedral_impostors/profiles/standard.tres
+res://addons/octahedral_impostors/scripts/baking/scene_bakers/multi_bake_scene.gd

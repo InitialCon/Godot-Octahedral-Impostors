@@ -71,6 +71,7 @@ func _on_FileDialog_file_selected(path: String) -> void:
 	print("Baking to: %s" % path)
 	baker.save_path = path
 	baker.bake()
+	hide()
 
 
 func _on_ImpostorBaker_popup_hide() -> void:

@@ -26,7 +26,7 @@ var plugin: EditorPlugin = null
 var profile: ProfileResource = preload("res://addons/octahedral_impostors/profiles/standard.tres"):
 	get:
 		if profile == null:
-			print("Previous load failed. Getting standard...")
+			print("Previous profile load failed. Getting standard...")
 			profile = load("res://addons/octahedral_impostors/profiles/standard.tres")
 		return profile
 var atlas_resolution = 2048
@@ -81,16 +81,20 @@ func bake_map(map_baker: MapBaker, scene: Node3D, vp: SubViewport, postprocess: 
 	# 		vec3 srgb_to_linear(vec3 color) { 
 	# 			return color * (color * (color * 0.305306011 + 0.682171111) + 0.012522878); 
 	# 		} 
-	map_baker.viewport_setup(vp) 
+	map_baker.viewport_setup(vp)
 	if map_baker.setup_postprocess_plane(postprocess, scene_baker.get_camera_3d()):
 		baking_postprocess_plane.visible = true
 	map_baker_process_materials(map_baker, scene)
 	scene_baker.set_scene_to_bake(scene)
+	print("Set scene to bake.")
 	await scene_baker.atlas_ready
+	print("Atlas is ready.")
 	var result_image = scene_baker.atlas_image
 	if map_baker.is_dilatated():
+		print("Dialating")
 		await dilatation_pipeline.dilatate(result_image, map_baker.use_as_dilatate_mask())
 		result_image = dilatation_pipeline.processed_image
+	print("Baked map")
 	exporter.save_map(map_baker, result_image)
 	preview_map(result_image)
 	map_baker.viewport_cleanup(vp)
