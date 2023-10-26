@@ -22,7 +22,8 @@ func _dilatate_image(alpha_mask: Image, image: Image):
 	print("DilateViewportSize: ", $DilateViewport.size)
 
 	var viewport_texture:ViewportTexture = $DilateViewport.get_texture()
-	await RenderingServer.frame_post_draw
+	#RenderingServer.force_draw()
+	#await RenderingServer.frame_post_draw
 	#viewport_texture.flags = 0
 	self.processed_image = viewport_texture.get_image()
 

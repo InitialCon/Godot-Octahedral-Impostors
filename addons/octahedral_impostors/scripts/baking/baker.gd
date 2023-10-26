@@ -113,6 +113,7 @@ func setup_bake_resolution(scene_baker: SceneBaker, map_baker: MapBaker) -> void
 func bake():
 	print("Profile: %s" % profile)
 	print("Baking using profile: ", profile.name)
+	print_tree_pretty()
 	scene_baker = MultiBakeScene.instantiate()
 	exporter.export_path = save_path.get_base_dir()
 	exporter.packedscene_filename = save_path.get_file()
@@ -123,8 +124,9 @@ func bake():
 	scene_baker.frames_xy = frames_xy
 	scene_baker.is_full_sphere = is_full_sphere
 	baking_viewport.add_child(scene_baker)
+	baking_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(scene_to_bake)
-	print("Preparing scene to bake", scene_to_bake)
+	print("Preparing scene to bake ", scene_to_bake)
 	prepare_scene_to_bake(scene_to_bake)
 
 	#bake main map

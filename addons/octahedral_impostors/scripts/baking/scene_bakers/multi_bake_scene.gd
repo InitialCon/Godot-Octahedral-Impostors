@@ -93,6 +93,11 @@ func prepare_scene(node: Node3D) -> void:
 	baking_camera.size = camera_distance
 	baking_camera.far = camera_distance_scaled * 2.0
 	baking_camera.global_transform.origin.z = camera_distance_scaled
+	var d_vp:Node = baking_camera
+	while not d_vp == null:
+		if d_vp is SubViewport:
+			print("Viewport %s update mode: %s" % [d_vp.name, (d_vp as SubViewport).render_target_update_mode == SubViewport.UPDATE_ALWAYS])
+		d_vp = d_vp.get_parent()
 	$BakedContainer.remove_child(scene_to_bake)
 
 
@@ -111,10 +116,13 @@ func set_scene_to_bake(node: Node3D) -> void:
 	for x in frames_xy:
 		for y in frames_xy:
 			create_frame_xy_scene(Vector2(x,y))
+	var tex = viewport.get_texture()
 	await get_tree().process_frame
 	await get_tree().process_frame
 	await get_tree().process_frame
-	var atlas_image = viewport.get_texture().get_image()
+	RenderingServer.force_draw()
+	await RenderingServer.frame_post_draw
+	var atlas_image = tex.get_image()
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
 	set_atlas_image(atlas_image)
@@ -123,7 +131,8 @@ func set_scene_to_bake(node: Node3D) -> void:
 
 func cleanup() -> void:
 	var viewport = get_viewport()
-	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	#print("Baking viewport: %s" % viewport.get_path())
+	
 	for n in $BakedContainer.get_children():
 		$BakedContainer.remove_child(n)
 

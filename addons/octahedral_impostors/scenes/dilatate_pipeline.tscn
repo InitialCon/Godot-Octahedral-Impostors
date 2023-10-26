@@ -12,6 +12,7 @@ transparent_bg = true
 debug_draw = 1
 gui_disable_input = true
 size = Vector2i(1024, 1024)
+render_target_update_mode = 4
 
 [node name="tex" type="TextureRect" parent="DilateViewport"]
 material = ExtResource("2")
