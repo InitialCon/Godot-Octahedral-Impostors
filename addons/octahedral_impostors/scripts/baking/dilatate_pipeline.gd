@@ -19,13 +19,14 @@ func _dilatate_image(alpha_mask: Image, image: Image):
 	#$DilateViewport.render_target_v_flip = true
 	$DilateViewport/tex.flip_v = true
 	#$DilateViewport.update_worlds()
-	print("DilateViewportSize: ", $DilateViewport.size)
 
 	var viewport_texture:ViewportTexture = $DilateViewport.get_texture()
 	#RenderingServer.force_draw()
-	#await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	#RenderingServer.force_sync()
 	#viewport_texture.flags = 0
-	self.processed_image = viewport_texture.get_image()
+	self.processed_image = ImageTexture.create_from_image(viewport_texture.get_image()).get_image()
+	print("Dilated image.")
 
 
 func dilatate_mask(alpha_mask: Image, image: Image):

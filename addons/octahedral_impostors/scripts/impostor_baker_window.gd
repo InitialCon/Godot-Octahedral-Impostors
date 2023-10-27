@@ -38,7 +38,6 @@ func _ready():
 
 
 func _on_Generate_pressed():
-	print("Generate pressed")
 	$FileDialog.popup_centered()
 
 
@@ -68,7 +67,6 @@ func _on_OptionButtonImgRes_item_selected(new_dimm: int):
 
 
 func _on_FileDialog_file_selected(path: String) -> void:
-	print("Baking to: %s" % path)
 	baker.save_path = path
 	baker.bake()
 	hide()

@@ -7,3 +7,7 @@ export_presets.cfg
 .mono/
 .vs/
 .tests/
+
+# misc
+junk/
+

@@ -76,7 +76,6 @@ func create_frame_xy_scene(frame: Vector2) -> void:
 
 
 func prepare_scene(node: Node3D) -> void:
-	print("Preparing scene")
 	scene_to_bake = node.duplicate()
 	# we need to add this scene to a tree to recalculate aabb
 	$BakedContainer.add_child(scene_to_bake)
@@ -93,11 +92,6 @@ func prepare_scene(node: Node3D) -> void:
 	baking_camera.size = camera_distance
 	baking_camera.far = camera_distance_scaled * 2.0
 	baking_camera.global_transform.origin.z = camera_distance_scaled
-	var d_vp:Node = baking_camera
-	while not d_vp == null:
-		if d_vp is SubViewport:
-			print("Viewport %s update mode: %s" % [d_vp.name, (d_vp as SubViewport).render_target_update_mode == SubViewport.UPDATE_ALWAYS])
-		d_vp = d_vp.get_parent()
 	$BakedContainer.remove_child(scene_to_bake)
 
 
@@ -106,7 +100,6 @@ func prepare_viewport(vp: SubViewport) -> void:
 
 
 func set_scene_to_bake(node: Node3D) -> void:
-	print("Setting scene to bake - multi")
 	var viewport = get_viewport()
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	prepare_viewport(viewport)
@@ -122,16 +115,16 @@ func set_scene_to_bake(node: Node3D) -> void:
 	await get_tree().process_frame
 	RenderingServer.force_draw()
 	await RenderingServer.frame_post_draw
-	var atlas_image = tex.get_image()
+	var atlas_image:Image = ImageTexture.create_from_image(tex.get_image()).get_image()
+	print("Atlas image rendered.")
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
 	set_atlas_image(atlas_image)
-	emit_signal("atlas_ready")
+	atlas_ready.emit()
 
 
 func cleanup() -> void:
 	var viewport = get_viewport()
-	#print("Baking viewport: %s" % viewport.get_path())
 	
 	for n in $BakedContainer.get_children():
 		$BakedContainer.remove_child(n)

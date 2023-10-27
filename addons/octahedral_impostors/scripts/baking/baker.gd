@@ -43,6 +43,7 @@ var scene_baker: SceneBaker
 var scene_materials_cache := {}
 var scene_to_bake: Node3D = null
 
+
 func prepare_scene_to_bake(scene: Node3D):
 	MeshUtils.create_materials_cache(scene, scene_materials_cache)
 
@@ -86,15 +87,11 @@ func bake_map(map_baker: MapBaker, scene: Node3D, vp: SubViewport, postprocess: 
 		baking_postprocess_plane.visible = true
 	map_baker_process_materials(map_baker, scene)
 	scene_baker.set_scene_to_bake(scene)
-	print("Set scene to bake.")
 	await scene_baker.atlas_ready
-	print("Atlas is ready.")
 	var result_image = scene_baker.atlas_image
 	if map_baker.is_dilatated():
-		print("Dialating")
 		await dilatation_pipeline.dilatate(result_image, map_baker.use_as_dilatate_mask())
 		result_image = dilatation_pipeline.processed_image
-	print("Baked map")
 	exporter.save_map(map_baker, result_image)
 	preview_map(result_image)
 	map_baker.viewport_cleanup(vp)
@@ -111,9 +108,6 @@ func setup_bake_resolution(scene_baker: SceneBaker, map_baker: MapBaker) -> void
 
 
 func bake():
-	print("Profile: %s" % profile)
-	print("Baking using profile: ", profile.name)
-	print_tree_pretty()
 	scene_baker = MultiBakeScene.instantiate()
 	exporter.export_path = save_path.get_base_dir()
 	exporter.packedscene_filename = save_path.get_file()
@@ -126,12 +120,10 @@ func bake():
 	baking_viewport.add_child(scene_baker)
 	baking_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(scene_to_bake)
-	print("Preparing scene to bake ", scene_to_bake)
 	prepare_scene_to_bake(scene_to_bake)
 
 	#bake main map
 	var map_baker = profile.map_baker_with_alpha_mask.new()
-	print("Baking main map: ", map_baker.get_name())
 	setup_bake_resolution(scene_baker, map_baker)
 	await bake_map(map_baker, scene_to_bake, baking_viewport, baking_postprocess_plane.mesh)
 	await get_tree().process_frame 
@@ -141,13 +133,11 @@ func bake():
 
 	for mapbaker in profile.standard_map_bakers:
 		map_baker = mapbaker.new()
-		print("Baking: ", map_baker.get_name())
 		setup_bake_resolution(scene_baker, map_baker)
 		await bake_map(map_baker, scene_to_bake, baking_viewport, baking_postprocess_plane.mesh)
 		await get_tree().process_frame
 		await get_tree().process_frame
 	
-	print("Exporting...")
 	var shader_mat := ShaderMaterial.new()
 	shader_mat.shader = profile.main_shader
 	exporter.scale_instance = scene_baker.get_camera_3d().size / 2.0
@@ -160,8 +150,7 @@ func bake():
 	generated_shadow_impostor = exporter.generated_shadow_impostor
 
 	remove_child(scene_to_bake)
-	print("Exporting impostor done.")
-	emit_signal("bake_done")
+	bake_done.emit()
 
 
 func make_nodes_visible(node: Node3D) -> void:
