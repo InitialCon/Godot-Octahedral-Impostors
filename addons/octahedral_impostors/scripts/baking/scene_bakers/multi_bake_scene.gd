@@ -51,10 +51,11 @@ func setup_camera_position(camera: Marker3D, position: Vector3) -> void:
 	camera.look_at_from_position(position, Vector3.ZERO, Vector3.UP)
 
 
+## Creates instances of baked mesh
 func create_frame_xy_scene(frame: Vector2) -> void:
 	var cam_pos = Marker3D.new()
-	var container := Node3D.new()
-	var scale := camera_distance / float(frames_xy)
+	var container: Node3D = Node3D.new()
+	var d_scale := camera_distance / float(frames_xy)
 	var uv_coord: Vector2 = frame / float(frames_xy - 1)
 	var normal := OctahedralUtils.grid_to_vector(uv_coord, is_full_sphere)
 
@@ -70,8 +71,8 @@ func create_frame_xy_scene(frame: Vector2) -> void:
 	d_baked_scene.transform = cam_pos.transform.affine_inverse() * d_baked_scene.transform
 	d_baked_scene.global_transform.origin.z = 0
 	container.transform.origin = Vector3(0,0,0)
-	container.position.x = (float(frames_xy)/2.0 - float(frame.x) -0.5 )* (-scale)
-	container.position.y = (float(frames_xy)/2.0 - float(frame.y) -0.5 )* scale
+	container.position.x = (float(frames_xy)/2.0 - float(frame.x) - 0.5 ) * (-d_scale)
+	container.position.y = (float(frames_xy)/2.0 - float(frame.y) - 0.5 ) * d_scale
 	container.remove_child(cam_pos)
 
 
@@ -88,6 +89,7 @@ func prepare_scene(node: Node3D) -> void:
 	update_scene_to_bake_transform()
 	
 	camera_distance = aabb.size.length()
+	print(camera_distance)
 	camera_distance_scaled = camera_distance / float(frames_xy)
 	baking_camera.size = camera_distance
 	baking_camera.far = camera_distance_scaled * 2.0
@@ -106,6 +108,7 @@ func set_scene_to_bake(node: Node3D) -> void:
 	if scene_to_bake:
 		scene_to_bake.queue_free()
 	prepare_scene(node)
+	# Create all clones
 	for x in frames_xy:
 		for y in frames_xy:
 			create_frame_xy_scene(Vector2(x,y))
@@ -115,6 +118,8 @@ func set_scene_to_bake(node: Node3D) -> void:
 	print("Atlas image rendered.")
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
+	atlas_image.save_png("res://%s.png" % randi_range(0, 1000))
+	print(atlas_image.get_size())
 	set_atlas_image(atlas_image)
 	atlas_ready.emit()
 

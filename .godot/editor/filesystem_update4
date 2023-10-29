@@ -1,6 +1,2 @@
 res://assets/monkey/monkey.tscn
-res://addons/octahedral_impostors/scripts/baking/scene_bakers/multi_bake_scene.gd
-res://addons/octahedral_impostors/scripts/baking/maps/depth_map.gd
-res://addons/octahedral_impostors/scripts/baking/maps/normalmap_map.gd
-res://addons/octahedral_impostors/scripts/baking/maps/orm_map.gd
-res://addons/octahedral_impostors/scripts/baking/maps/albedo_map.gd
+res://addons/octahedral_impostors/scripts/baking/baker.gd

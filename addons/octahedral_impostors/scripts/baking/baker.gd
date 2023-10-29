@@ -153,6 +153,7 @@ func bake():
 	bake_done.emit()
 
 
+## Used to hide model being baked
 func make_nodes_visible(node: Node3D) -> void:
 	if node.has_method("set_visible"):
 		node.visible = true
