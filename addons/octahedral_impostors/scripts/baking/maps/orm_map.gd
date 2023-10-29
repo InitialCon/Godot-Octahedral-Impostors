@@ -14,7 +14,7 @@ func is_srgb() -> bool:
 
 
 func is_dilatated() -> bool:
-	return true
+	return false
 
 
 func recommended_scale_divider(image_dimmension: int) -> int:

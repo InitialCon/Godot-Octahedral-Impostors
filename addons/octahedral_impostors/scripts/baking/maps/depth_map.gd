@@ -14,7 +14,7 @@ func is_srgb() -> bool:
 
 
 func is_dilatated() -> bool:
-	return true
+	return false
 
 
 func setup_postprocess_plane(plane: Mesh, camera: Camera3D) -> bool:

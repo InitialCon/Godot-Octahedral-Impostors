@@ -8,11 +8,11 @@ func get_name() -> String:
 
 
 func is_dilatated() -> bool:
-	return true
+	return false
 
 
 func use_as_dilatate_mask() -> bool:
-	return true
+	return false
 
 
 func map_bake(org_material: Material) -> Material:

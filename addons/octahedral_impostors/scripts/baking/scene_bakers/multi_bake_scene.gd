@@ -80,13 +80,13 @@ func prepare_scene(node: Node3D) -> void:
 	# we need to add this scene to a tree to recalculate aabb
 	$BakedContainer.add_child(scene_to_bake)
 	scene_to_bake.show()
-
+	
 	scene_to_bake.position = Vector3()
 	scene_to_bake.rotation = Vector3()
 	var aabb: AABB = get_scene_to_bake_aabb()
 	imported_scene_scale = scene_to_bake.scale
 	update_scene_to_bake_transform()
-
+	
 	camera_distance = aabb.size.length()
 	camera_distance_scaled = camera_distance / float(frames_xy)
 	baking_camera.size = camera_distance

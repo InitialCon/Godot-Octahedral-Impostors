@@ -14,7 +14,7 @@ func is_normal_map() -> bool:
 
 
 func is_dilatated() -> bool:
-	return true
+	return false
 
 
 func image_format() -> int:
