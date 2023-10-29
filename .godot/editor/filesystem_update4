@@ -1,0 +1,3 @@
+res://assets/monkey/monkey.tscn
+res://addons/octahedral_impostors/scripts/baking/scene_bakers/multi_bake_scene.gd
+res://addons/octahedral_impostors/scripts/baking/dilatate_pipeline.gd

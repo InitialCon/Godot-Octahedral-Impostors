@@ -109,13 +109,9 @@ func set_scene_to_bake(node: Node3D) -> void:
 	for x in frames_xy:
 		for y in frames_xy:
 			create_frame_xy_scene(Vector2(x,y))
-	var tex = viewport.get_texture()
 	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
-	RenderingServer.force_draw()
 	await RenderingServer.frame_post_draw
-	var atlas_image:Image = ImageTexture.create_from_image(tex.get_image()).get_image()
+	var atlas_image:Image = viewport.get_texture().get_image()
 	print("Atlas image rendered.")
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
