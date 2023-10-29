@@ -76,6 +76,7 @@ func create_frame_xy_scene(frame: Vector2) -> void:
 	container.remove_child(cam_pos)
 
 
+
 func prepare_scene(node: Node3D) -> void:
 	scene_to_bake = node.duplicate()
 	# we need to add this scene to a tree to recalculate aabb
@@ -92,8 +93,8 @@ func prepare_scene(node: Node3D) -> void:
 	print(camera_distance)
 	camera_distance_scaled = camera_distance / float(frames_xy)
 	baking_camera.size = camera_distance
-	baking_camera.far = camera_distance_scaled * 2.0
-	baking_camera.global_transform.origin.z = camera_distance_scaled
+	baking_camera.far = 1000#camera_distance_scaled * 2.5
+	baking_camera.global_transform.origin.z = camera_distance_scaled * 1.1
 	$BakedContainer.remove_child(scene_to_bake)
 
 
@@ -114,11 +115,11 @@ func set_scene_to_bake(node: Node3D) -> void:
 			create_frame_xy_scene(Vector2(x,y))
 	await get_tree().process_frame
 	await RenderingServer.frame_post_draw
-	var atlas_image:Image = viewport.get_texture().get_image()
+	var atlas_image:Image =  ImageTexture.create_from_image(viewport.get_texture().get_image()).get_image() # Duplicate the image, otherwise it holds and invalid reference by the end
 	print("Atlas image rendered.")
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
-	atlas_image.save_png("res://%s.png" % randi_range(0, 1000))
+	#atlas_image.save_png("res://%s.png" % randi_range(0, 1000))
 	print(atlas_image.get_size())
 	set_atlas_image(atlas_image)
 	atlas_ready.emit()
