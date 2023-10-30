@@ -114,7 +114,6 @@ func bake_scene(node: OctaImpostor) -> void:
 		dir.remove(save_file)
 		plugin.get_editor_interface().get_resource_filesystem().scan()
 	baker.save_path = save_file
-	print("Trying to bake:", baker.save_path)
 	# TODO: remove all old impostors
 	baker.frames_xy = node.frames_xy
 	baker.create_shadow_mesh = node.create_shadow_mesh

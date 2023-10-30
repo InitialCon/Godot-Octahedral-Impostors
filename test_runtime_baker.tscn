@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdvi1hfsqyqsk"]
+
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/bake_scene_root.gd" id="1_y3h02"]
+[ext_resource type="PackedScene" uid="uid://c57vfjtqepxpm" path="res://assets/monkey/monkey.tscn" id="2_aqc5d"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("1_y3h02")
+
+[node name="untitled" parent="Node" instance=ExtResource("2_aqc5d")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)

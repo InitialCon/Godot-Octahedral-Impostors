@@ -1,17 +1,17 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://dxt2k7ua6mll3"]
 
-[ext_resource path="res://addons/octahedral_impostors/materials/depth_baker.material" type="Material" id=1]
-[ext_resource path="res://addons/octahedral_impostors/scripts/baking/scene_bakers/multi_bake_scene.gd" type="Script" id=2]
+[ext_resource type="Material" uid="uid://bth6sxf2m2vq2" path="res://addons/octahedral_impostors/materials/depth_baker.material" id="1"]
+[ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/scene_bakers/multi_bake_scene.gd" id="2"]
 
-[sub_resource type="QuadMesh" id=1]
-material = ExtResource( 1 )
-size = Vector2( 2, 2 )
+[sub_resource type="QuadMesh" id="1"]
+material = ExtResource("1")
+size = Vector2(2, 2)
 
 [node name="MultiBakeScene" type="Node3D"]
-script = ExtResource( 2 )
+script = ExtResource("2")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.18746 )
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.18746)
 projection = 1
 current = true
 fov = 45.0
@@ -21,8 +21,7 @@ far = 200.0
 visible = false
 cast_shadow = 0
 extra_cull_margin = 16384.0
-mesh = SubResource( 1 )
-material/0 = null
+mesh = SubResource("1")
 
 [node name="BakedContainer" type="Node3D" parent="."]
 

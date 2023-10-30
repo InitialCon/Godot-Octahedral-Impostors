@@ -1,3 +1,4 @@
+class_name ProfileResource
 extends Resource
 
 @export var name: String

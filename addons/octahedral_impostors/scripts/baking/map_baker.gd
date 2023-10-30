@@ -1,5 +1,9 @@
 @tool
 
+
+var _orig_mode:int
+
+
 func get_name() -> String:
 	return "unknown"
 
@@ -29,11 +33,12 @@ func recommended_scale_divider(image_dimmension: int) -> int:
 
 
 func viewport_setup(viewport: SubViewport) -> void:
-	pass
+	_orig_mode = viewport.render_target_update_mode
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 
 
 func viewport_cleanup(viewport: SubViewport) -> void:
-	pass
+	viewport.render_target_update_mode =_orig_mode
 
 
 func setup_postprocess_plane(plane: Mesh, camera: Camera3D) -> bool:

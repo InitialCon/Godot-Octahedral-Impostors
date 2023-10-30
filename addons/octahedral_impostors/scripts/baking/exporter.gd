@@ -5,7 +5,7 @@ extends Node3D
 const MapBaker = preload("map_baker.gd")
 
 var plugin: EditorPlugin = null
-var export_path :String= "res://"
+var export_path:String = "res://"
 var frames_xy := 12
 var is_full_sphere := false
 var scale_instance := 1.0
@@ -20,9 +20,9 @@ func rescan_filesystem():
 	var plugin_filesystem = plugin.get_editor_interface().get_resource_filesystem()
 	plugin_filesystem.scan()
 	print("Scanning filesystem...")
-	await get_tree().idle_frame
+	await get_tree().process_frame
 	while plugin_filesystem.is_scanning():
-		await get_tree().idle_frame
+		await get_tree().process_frame
 		if not is_inside_tree():
 			print("Not inside a tree...")
 			return
@@ -52,7 +52,7 @@ func wait_for_correct_load_texture(path: String) -> void:
 	var texture = null
 	while texture == null:
 		texture = load(path)
-		await get_tree().idle_frame
+		await get_tree().process_frame
 
 
 func wait_on_resources() -> void:
@@ -63,17 +63,17 @@ func wait_on_resources() -> void:
 	# after scanning so we need to yield some more...
 	print("Waiting for import to finish...")
 	for counter in saved_maps.size() * 2.0:
-		await get_tree().idle_frame
+		await get_tree().process_frame
 
 	# wait until the images have all been (re)imported.
 	print("Waiting for resources on disk...")
 	while not all_resource_exists():
-		await get_tree().idle_frame
-		await get_tree().idle_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
 
-	print("Resource should now exists...")
+	print("Resource should now exist...")
 	for counter in saved_maps.size() * 2.0:
-		await get_tree().idle_frame
+		await get_tree().process_frame
 	
 	#not sure if needed
 	print("Waiting for correct texture loading")
@@ -134,7 +134,7 @@ func export_scene(mat: Material, texture_array: bool = false, shadow_mat: Materi
 	var err = ResourceSaver.save(packed_scene, export_path.path_join(packedscene_filename))
 	if err != OK:
 		print("Error while exporting to path: ", export_path.path_join(packedscene_filename))
-		print("Failure! CODE =", err)
+		print("Failure! CODE = ", err)
 		return null
 	else:
 		print("Imposter ready!")

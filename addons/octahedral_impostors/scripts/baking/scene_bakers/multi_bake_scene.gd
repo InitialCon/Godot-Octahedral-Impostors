@@ -26,12 +26,13 @@ func get_pivot_translation() -> Vector3:
 
 
 func get_scene_to_bake_aabb(node := scene_to_bake) -> AABB:
-	var aabb := AABB(Vector3.ONE * 65536.0, -Vector3.ONE * 65536.0 * 2.0)
+	#var aabb := AABB(Vector3.ONE * 65536.0, -Vector3.ONE * 65536.0 * 2.0) # what is this??
+	var aabb := AABB()
 	if node is GeometryInstance3D and not node is CSGShape3D:
-		aabb = aabb.merge(node.get_transformed_aabb())
+		aabb = aabb.merge(node.global_transform * node.mesh.get_aabb().abs()) # This assumes it is a mesh instance. TODO: Generalize
 	for child in node.get_children():
 		aabb = aabb.merge(get_scene_to_bake_aabb(child))
-	return aabb
+	return aabb.abs()
 
 
 func update_scene_to_bake_transform() -> void:
@@ -50,10 +51,11 @@ func setup_camera_position(camera: Marker3D, position: Vector3) -> void:
 	camera.look_at_from_position(position, Vector3.ZERO, Vector3.UP)
 
 
+## Creates instances of baked mesh
 func create_frame_xy_scene(frame: Vector2) -> void:
 	var cam_pos = Marker3D.new()
-	var container := Node3D.new()
-	var scale := camera_distance / float(frames_xy)
+	var container: Node3D = Node3D.new()
+	var d_scale := camera_distance / float(frames_xy)
 	var uv_coord: Vector2 = frame / float(frames_xy - 1)
 	var normal := OctahedralUtils.grid_to_vector(uv_coord, is_full_sphere)
 
@@ -69,9 +71,10 @@ func create_frame_xy_scene(frame: Vector2) -> void:
 	d_baked_scene.transform = cam_pos.transform.affine_inverse() * d_baked_scene.transform
 	d_baked_scene.global_transform.origin.z = 0
 	container.transform.origin = Vector3(0,0,0)
-	container.position.x = (float(frames_xy)/2.0 - float(frame.x) -0.5 )* (-scale)
-	container.position.y = (float(frames_xy)/2.0 - float(frame.y) -0.5 )* scale
+	container.position.x = (float(frames_xy)/2.0 - float(frame.x) - 0.5 ) * (-d_scale)
+	container.position.y = (float(frames_xy)/2.0 - float(frame.y) - 0.5 ) * d_scale
 	container.remove_child(cam_pos)
+
 
 
 func prepare_scene(node: Node3D) -> void:
@@ -79,18 +82,19 @@ func prepare_scene(node: Node3D) -> void:
 	# we need to add this scene to a tree to recalculate aabb
 	$BakedContainer.add_child(scene_to_bake)
 	scene_to_bake.show()
-
+	
 	scene_to_bake.position = Vector3()
 	scene_to_bake.rotation = Vector3()
 	var aabb: AABB = get_scene_to_bake_aabb()
 	imported_scene_scale = scene_to_bake.scale
 	update_scene_to_bake_transform()
-
+	
 	camera_distance = aabb.size.length()
+	print(camera_distance)
 	camera_distance_scaled = camera_distance / float(frames_xy)
 	baking_camera.size = camera_distance
-	baking_camera.far = camera_distance_scaled * 2.0
-	baking_camera.global_transform.origin.z = camera_distance_scaled
+	baking_camera.far = 1000#camera_distance_scaled * 2.5
+	baking_camera.global_transform.origin.z = camera_distance_scaled * 1.1
 	$BakedContainer.remove_child(scene_to_bake)
 
 
@@ -105,22 +109,25 @@ func set_scene_to_bake(node: Node3D) -> void:
 	if scene_to_bake:
 		scene_to_bake.queue_free()
 	prepare_scene(node)
+	# Create all clones
 	for x in frames_xy:
 		for y in frames_xy:
 			create_frame_xy_scene(Vector2(x,y))
-	await get_tree().idle_frame
-	await get_tree().idle_frame
-	await get_tree().idle_frame
-	var atlas_image = viewport.get_texture().get_data()
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	var atlas_image:Image =  ImageTexture.create_from_image(viewport.get_texture().get_image()).get_image() # Duplicate the image, otherwise it holds and invalid reference by the end
+	print("Atlas image rendered.")
 	atlas_image.flip_y()
 	atlas_image.convert(Image.FORMAT_RGBAH)
+	#atlas_image.save_png("res://%s.png" % randi_range(0, 1000))
+	print(atlas_image.get_size())
 	set_atlas_image(atlas_image)
-	emit_signal("atlas_ready")
+	atlas_ready.emit()
 
 
 func cleanup() -> void:
 	var viewport = get_viewport()
-	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	
 	for n in $BakedContainer.get_children():
 		$BakedContainer.remove_child(n)
 

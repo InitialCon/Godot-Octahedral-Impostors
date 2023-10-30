@@ -36,9 +36,6 @@ func _ready():
 	read_baking_profiles(profile_option_button)
 	baker.profile = profile_option_button.get_selected_metadata()
 
-func _process(_delta):
-	pass
-
 
 func _on_Generate_pressed():
 	$FileDialog.popup_centered()
@@ -72,6 +69,7 @@ func _on_OptionButtonImgRes_item_selected(new_dimm: int):
 func _on_FileDialog_file_selected(path: String) -> void:
 	baker.save_path = path
 	baker.bake()
+	hide()
 
 
 func _on_ImpostorBaker_popup_hide() -> void:

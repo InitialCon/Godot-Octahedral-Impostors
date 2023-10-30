@@ -1,0 +1,3 @@
+res://addons/octahedral_impostors/scenes/multi_bake_scene.tscn
+res://addons/octahedral_impostors/scripts/baking/scene_bakers/multi_bake_scene.gd
+res://assets/monkey/monkey.tscn

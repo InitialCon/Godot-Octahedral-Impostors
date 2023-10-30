@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=8 format=3 uid="uid://tipmgthvqtx"]
+[gd_resource type="Resource" script_class="ProfileResource" load_steps=8 format=3 uid="uid://tipmgthvqtx"]
 
 [ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/maps/depth_map.gd" id="1"]
 [ext_resource type="Script" path="res://addons/octahedral_impostors/scripts/baking/maps/albedo_map.gd" id="2"]
